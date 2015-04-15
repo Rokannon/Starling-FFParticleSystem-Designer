@@ -1,0 +1,8 @@
+{
+    "appendFromObject": {
+        "randomStartFrames": true,
+        "sourceX": 300,
+        "sourceY": 500
+    },
+    "particleDirectory": "c:/Users/Vladimir/Documents/Demo-Particles/particle1/"
+}

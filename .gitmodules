@@ -7,3 +7,9 @@
 [submodule "submodules/Starling-Framework"]
 	path = submodules/Starling-Framework
 	url = https://github.com/Gamua/Starling-Framework.git
+[submodule "submodules/Rokannon-AS3-Lib"]
+	path = submodules/Rokannon-AS3-Lib
+	url = https://github.com/Rokannon/Rokannon-AS3-Lib.git
+[submodule "submodules/TextureUtils"]
+	path = submodules/TextureUtils
+	url = https://github.com/treefortress/TextureUtils.git

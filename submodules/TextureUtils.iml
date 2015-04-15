@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="FlexBuildConfigurationManager" active="Feathers">
+  <component name="FlexBuildConfigurationManager" active="TextureUtils">
     <configurations>
-      <configuration name="Feathers" target-platform="Desktop" pure-as="true" output-type="Library" output-file="Feathers.swc" output-folder="$MODULE_DIR$/../out/production/Feathers">
-        <dependencies target-player="17.0">
+      <configuration name="TextureUtils" target-platform="Desktop" pure-as="true" output-type="Library" output-file="TextureUtils.swc" output-folder="$MODULE_DIR$/../out/production/TextureUtils">
+        <dependencies>
           <entries>
             <entry module-name="Starling-Framework" build-configuration-name="Starling-Framework">
               <dependency linkage="External" />
@@ -23,10 +23,8 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/Feathers">
-      <sourceFolder url="file://$MODULE_DIR$/Feathers/source" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Feathers/themes/MetalWorksDesktopTheme/source" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Feathers/themes/MetalWorksMobileTheme/source" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/TextureUtils">
+      <sourceFolder url="file://$MODULE_DIR$/TextureUtils/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="AIRSDK 17" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />

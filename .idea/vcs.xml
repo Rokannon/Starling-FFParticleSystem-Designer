@@ -3,7 +3,9 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$/submodules/Feathers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/submodules/Rokannon-AS3-Lib" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/submodules/Starling-FFParticleSystem" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/submodules/Starling-Framework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/submodules/TextureUtils" vcs="Git" />
   </component>
 </project>

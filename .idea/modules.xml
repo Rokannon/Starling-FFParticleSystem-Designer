@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/submodules//Feathers.iml" filepath="$PROJECT_DIR$/submodules//Feathers.iml" group="submodules" />
-      <module fileurl="file://$PROJECT_DIR$/submodules//Starling-FFParticleSystem.iml" filepath="$PROJECT_DIR$/submodules//Starling-FFParticleSystem.iml" group="submodules" />
+      <module fileurl="file://$PROJECT_DIR$/submodules/Feathers.iml" filepath="$PROJECT_DIR$/submodules/Feathers.iml" group="submodules" />
+      <module fileurl="file://$PROJECT_DIR$/submodules/Rokannon-AS3-Lib.iml" filepath="$PROJECT_DIR$/submodules/Rokannon-AS3-Lib.iml" group="submodules" />
+      <module fileurl="file://$PROJECT_DIR$/submodules/Starling-FFParticleSystem.iml" filepath="$PROJECT_DIR$/submodules/Starling-FFParticleSystem.iml" group="submodules" />
       <module fileurl="file://$PROJECT_DIR$/submodules/Starling-Framework.iml" filepath="$PROJECT_DIR$/submodules/Starling-Framework.iml" group="submodules" />
+      <module fileurl="file://$PROJECT_DIR$/submodules//TextureUtils.iml" filepath="$PROJECT_DIR$/submodules//TextureUtils.iml" group="submodules" />
       <module fileurl="file://$PROJECT_DIR$/main/main.iml" filepath="$PROJECT_DIR$/main/main.iml" />
     </modules>
   </component>
