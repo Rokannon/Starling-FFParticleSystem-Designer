@@ -1,6 +1,5 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller.startStarling
 {
-    import com.rokannon.project.FFParticleSystemDesigner.controller.ApplicationController;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
 
     import flash.display.Stage;
@@ -10,6 +9,5 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.startStarling
         public var showStats:Boolean;
         public var nativeStage:Stage;
         public var appModel:ApplicationModel;
-        public var appController:ApplicationController;
     }
 }

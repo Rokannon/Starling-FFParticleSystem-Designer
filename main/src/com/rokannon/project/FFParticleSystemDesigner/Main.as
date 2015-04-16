@@ -28,14 +28,17 @@ package com.rokannon.project.FFParticleSystemDesigner
             removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             stage.scaleMode = StageScaleMode.NO_SCALE;
 
-            _appController.connect(_appModel);
-
             var startStarlingCommandData:StartStarlingCommandData = new StartStarlingCommandData();
-            startStarlingCommandData.appModel = _appModel;
-            startStarlingCommandData.appController = _appController;
             startStarlingCommandData.nativeStage = stage;
             startStarlingCommandData.showStats = true;
+            startStarlingCommandData.appModel = _appModel;
             _appModel.commandExecutor.pushCommand(new StartStarlingCommand(startStarlingCommandData));
+
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                _appController.connect(_appModel, _appModel.starlingInstance.root as ApplicationView);
+                _appController.startApplication();
+            });
         }
     }
 }

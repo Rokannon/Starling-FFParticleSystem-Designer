@@ -8,7 +8,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.startStarling
 
     public class StartStarlingCommand extends CommandBase
     {
-        private var _starlingInstance:Starling;
         private var _data:StartStarlingCommandData;
 
         public function StartStarlingCommand(data:StartStarlingCommandData)
@@ -18,17 +17,15 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.startStarling
 
         override protected function onStart():void
         {
-            _starlingInstance = new Starling(StarlingRoot, _data.nativeStage);
-            _starlingInstance.addEventListener(Event.ROOT_CREATED, onRootCreated);
-            _starlingInstance.start();
+            _data.appModel.starlingInstance = new Starling(ApplicationView, _data.nativeStage);
+            _data.appModel.starlingInstance.addEventListener(Event.ROOT_CREATED, onRootCreated);
+            _data.appModel.starlingInstance.start();
         }
 
         private function onRootCreated(event:Event):void
         {
-            _starlingInstance.removeEventListener(Event.ROOT_CREATED, onRootCreated);
-            _starlingInstance.showStats = _data.showStats;
-            var starlingRoot:StarlingRoot = _starlingInstance.root as StarlingRoot;
-            starlingRoot.startApplication(_data.appModel, _data.appController);
+            _data.appModel.starlingInstance.removeEventListener(Event.ROOT_CREATED, onRootCreated);
+            _data.appModel.starlingInstance.showStats = _data.showStats;
             onComplete();
         }
     }

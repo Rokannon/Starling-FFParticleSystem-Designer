@@ -3,6 +3,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.core.utils.getProperty;
     import com.rokannon.core.utils.requireProperty;
     import com.rokannon.core.utils.string.getExtension;
+    import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
@@ -19,7 +20,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import flash.filesystem.File;
 
     import starling.core.Starling;
-    import starling.display.DisplayObjectContainer;
     import starling.textures.Texture;
     import starling.textures.TextureAtlas;
 
@@ -28,14 +28,24 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     public class ApplicationController
     {
         private var _appModel:ApplicationModel;
+        private var _appView:ApplicationView;
 
         public function ApplicationController()
         {
         }
 
-        public function connect(appModel:ApplicationModel):void
+        public function connect(appModel:ApplicationModel, appView:ApplicationView):void
         {
             _appModel = appModel;
+            _appView = appView;
+        }
+
+        public function startApplication():void
+        {
+            FFParticleSystem.init(4096, false, 4096, 16);
+
+            loadConfig();
+            loadParticleSystem();
         }
 
         public function loadConfig():void
@@ -187,10 +197,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 particleModel.particleTexture, particleModel.particleAtlasXml);
             if (_appModel.particleModel.appendFromObject != null)
                 systemOptions.appendFromObject(_appModel.particleModel.appendFromObject);
-            var psBurning:FFParticleSystem = new FFParticleSystem(systemOptions);
-            DisplayObjectContainer(Starling.current.root).addChild(psBurning);
-            psBurning.start();
-            Starling.juggler.add(psBurning);
+            var particleSystem:FFParticleSystem = new FFParticleSystem(systemOptions);
+            _appView.particleSystemLayer.addChild(particleSystem);
+            particleSystem.start();
+            Starling.juggler.add(particleSystem);
             return true;
         }
     }
