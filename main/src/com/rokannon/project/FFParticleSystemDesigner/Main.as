@@ -36,7 +36,9 @@ package com.rokannon.project.FFParticleSystemDesigner
 
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
-                _appController.connect(_appModel, _appModel.starlingInstance.root as ApplicationView);
+                var applicationView:ApplicationView = _appModel.starlingInstance.root as ApplicationView;
+                applicationView.connect(_appController);
+                _appController.connect(_appModel, applicationView);
                 _appController.startApplication();
             });
         }

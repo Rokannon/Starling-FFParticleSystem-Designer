@@ -42,10 +42,31 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         public function startApplication():void
         {
+            _appModel.commandExecutor.eventExecuteStart.add(_appView.lockButtons);
+            _appModel.commandExecutor.eventExecuteEnd.add(_appView.unlockButtons);
+
             FFParticleSystem.init(4096, false, 4096, 16);
 
             loadConfig();
             loadParticleSystem();
+        }
+
+        public function reloadParticleSystem():void
+        {
+            unloadParticleSystem();
+            loadConfig();
+            loadParticleSystem();
+        }
+
+        public function unloadParticleSystem():void
+        {
+            _appView.particleSystemLayer.removeChildren(0, -1, true);
+            _appModel.particleModel.appendFromObject = null;
+            _appModel.particleModel.particleAtlasXml = null;
+            _appModel.particleModel.particleDirectory = null;
+            _appModel.particleModel.particlePex = null;
+            _appModel.particleModel.particleTexture.dispose();
+            _appModel.particleModel.particleTexture = null;
         }
 
         public function loadConfig():void
