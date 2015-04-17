@@ -6,8 +6,12 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommandData;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommand;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommandData;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommand;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
@@ -47,8 +51,41 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
             FFParticleSystem.init(4096, false, 4096, 16);
 
+            setupLocalStorage(false);
             loadConfig();
             loadParticleSystem();
+        }
+
+        public function setupLocalStorage(overwrite:Boolean):void
+        {
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                var configFile:File = File.applicationStorageDirectory.resolvePath("config.json");
+                _appModel.firstRun = !configFile.exists;
+                if (_appModel.firstRun || overwrite)
+                {
+                    var fileCopyCommandData:FileCopyCommandData;
+                    fileCopyCommandData = new FileCopyCommandData();
+                    fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
+                    fileCopyCommandData.fileToCopy = File.applicationDirectory.resolvePath("default_config.json");
+                    fileCopyCommandData.newFileName = "config.json";
+                    fileCopyCommandData.overwrite = true;
+                    _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
+
+                    var directoryDeleteCommandData:DirectoryDeleteCommandData = new DirectoryDeleteCommandData();
+                    directoryDeleteCommandData.deleteDirectoryContents = true;
+                    directoryDeleteCommandData.directoryToDelete = File.applicationStorageDirectory.resolvePath("demo_particle");
+                    _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData));
+
+                    fileCopyCommandData = new FileCopyCommandData();
+                    fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
+                    fileCopyCommandData.fileToCopy = File.applicationDirectory.resolvePath("demo_particle");
+                    fileCopyCommandData.newFileName = null;
+                    fileCopyCommandData.overwrite = true;
+                    _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
+                }
+                return true;
+            });
         }
 
         public function reloadParticleSystem():void
@@ -73,7 +110,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
             fileLoadCommandData.fileModel = _appModel.fileModel;
-            fileLoadCommandData.fileToLoad = File.applicationDirectory.resolvePath("config.json");
+            fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
             _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
 
             _appModel.commandExecutor.pushMethod(function ():Boolean
@@ -81,7 +118,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 try
                 {
                     var json:Object = JSON.parse(_appModel.fileModel.fileContent.toString());
-                    _appModel.particleModel.particleDirectory = File.applicationDirectory.resolvePath(requireProperty(json,
+                    _appModel.particleModel.particleDirectory = File.applicationStorageDirectory.resolvePath(requireProperty(json,
                         "particleDirectory"));
                     _appModel.particleModel.appendFromObject = getProperty(json, "appendFromObject", null);
                 }

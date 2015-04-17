@@ -59,10 +59,10 @@ package com.rokannon.project.FFParticleSystemDesigner
             _reloadButton.label = "Reload";
             _reloadButton.layoutData = new AnchorLayoutData(NaN, 10, 10);
             layoutGroup.addChild(_reloadButton);
-            _reloadButton.addEventListener(Event.TRIGGERED, onButtonTriggered);
+            _reloadButton.addEventListener(Event.TRIGGERED, onReloadButtonTriggered);
         }
 
-        private function onButtonTriggered(event:Event):void
+        private function onReloadButtonTriggered(event:Event):void
         {
             _appController.reloadParticleSystem();
         }

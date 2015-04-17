@@ -28,8 +28,9 @@
         </compiler-options>
         <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Main-descriptor.xml" package-file-name="Starling-FFParticleSystem-Designer">
           <files-to-package>
-            <FilePathAndPathInPackage file-path="$MODULE_DIR$/config/config.json" path-in-package="config.json" />
             <FilePathAndPathInPackage file-path="$MODULE_DIR$/assets" path-in-package="assets" />
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/config/default_config.json" path-in-package="default_config.json" />
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/config/demo_particle" path-in-package="demo_particle" />
           </files-to-package>
         </packaging-air-desktop>
         <packaging-android />

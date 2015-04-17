@@ -10,6 +10,7 @@ package com.rokannon.project.FFParticleSystemDesigner.model
         public const fileModel:FileModel = new FileModel();
         public const particleModel:ParticleModel = new ParticleModel();
         public var starlingInstance:Starling;
+        public var firstRun:Boolean = false;
 
         public function ApplicationModel()
         {
