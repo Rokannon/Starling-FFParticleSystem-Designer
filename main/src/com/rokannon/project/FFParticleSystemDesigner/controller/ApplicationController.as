@@ -56,6 +56,11 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             loadParticleSystem();
         }
 
+        public function openParticleSystemLocation():void
+        {
+            _appModel.particleModel.particleDirectory.openWithDefaultApplication();
+        }
+
         public function setupLocalStorage(overwrite:Boolean):void
         {
             _appModel.commandExecutor.pushMethod(function ():Boolean

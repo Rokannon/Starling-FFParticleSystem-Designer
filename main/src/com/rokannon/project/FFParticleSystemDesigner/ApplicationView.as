@@ -18,6 +18,7 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         private var _appController:ApplicationController;
         private var _reloadButton:Button;
+        private var _openButton:Button;
 
         public function ApplicationView()
         {
@@ -60,11 +61,24 @@ package com.rokannon.project.FFParticleSystemDesigner
             _reloadButton.layoutData = new AnchorLayoutData(NaN, 10, 10);
             layoutGroup.addChild(_reloadButton);
             _reloadButton.addEventListener(Event.TRIGGERED, onReloadButtonTriggered);
+
+            _openButton = new Button();
+            _openButton.label = "Open";
+            var anchorLayoutData:AnchorLayoutData = new AnchorLayoutData(NaN, 10, 10);
+            anchorLayoutData.bottomAnchorDisplayObject = _reloadButton;
+            _openButton.layoutData = anchorLayoutData;
+            layoutGroup.addChild(_openButton);
+            _openButton.addEventListener(Event.TRIGGERED, onOpenButtonTriggered);
         }
 
         private function onReloadButtonTriggered(event:Event):void
         {
             _appController.reloadParticleSystem();
+        }
+
+        private function onOpenButtonTriggered(event:Event):void
+        {
+            _appController.openParticleSystemLocation();
         }
     }
 }

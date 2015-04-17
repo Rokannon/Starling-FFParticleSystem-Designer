@@ -7,7 +7,7 @@
   <particleLifeSpan value="2.0000"/>
   <particleLifespanVariance value="1.9000"/>
   <angle value="270.00"/>
-  <angleVariance value="2.00"/>
+  <angleVariance value="45.00"/>
   <gravity x="0.00" y="0.00"/>
   <radialAcceleration value="0.00"/>
   <tangentialAcceleration value="0.00"/>
