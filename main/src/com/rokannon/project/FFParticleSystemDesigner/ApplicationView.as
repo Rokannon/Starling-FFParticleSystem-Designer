@@ -20,6 +20,7 @@ package com.rokannon.project.FFParticleSystemDesigner
         private var _reloadButton:Button;
         private var _openButton:Button;
         private var _browseButton:Button;
+        private var _resetButton:Button;
 
         public function ApplicationView()
         {
@@ -38,11 +39,13 @@ package com.rokannon.project.FFParticleSystemDesigner
         public function lockButtons():void
         {
             _reloadButton.isEnabled = false;
+            _resetButton.isEnabled = false;
         }
 
         public function unlockButtons():void
         {
             _reloadButton.isEnabled = true;
+            _resetButton.isEnabled = true;
         }
 
         private function onAddedToStage(event:Event = null):void
@@ -80,6 +83,14 @@ package com.rokannon.project.FFParticleSystemDesigner
             _browseButton.layoutData = anchorLayoutData;
             layoutGroup.addChild(_browseButton);
             _browseButton.addEventListener(Event.TRIGGERED, onBrowseButtonTriggered);
+
+            _resetButton = new Button();
+            _resetButton.label = "Reset";
+            anchorLayoutData = new AnchorLayoutData(NaN, 10, 10);
+            anchorLayoutData.bottomAnchorDisplayObject = _browseButton;
+            _resetButton.layoutData = anchorLayoutData;
+            layoutGroup.addChild(_resetButton);
+            _resetButton.addEventListener(Event.TRIGGERED, onResetButtonTriggered);
         }
 
         private function onReloadButtonTriggered(event:Event):void
@@ -95,6 +106,11 @@ package com.rokannon.project.FFParticleSystemDesigner
         private function onBrowseButtonTriggered(event:Event):void
         {
             _appController.browseParticleSystem();
+        }
+
+        private function onResetButtonTriggered(event:Event):void
+        {
+            _appController.resetParticleSystem();
         }
     }
 }

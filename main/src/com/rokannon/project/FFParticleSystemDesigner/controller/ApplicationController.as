@@ -67,6 +67,16 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             loadParticleSystem();
         }
 
+        public function resetParticleSystem():void
+        {
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                setupLocalStorage(true);
+                reloadParticleSystem();
+                return true;
+            });
+        }
+
         public function browseParticleSystem():void
         {
             var directoryBrowseCommandData:DirectoryBrowseCommandData = new DirectoryBrowseCommandData();
@@ -76,7 +86,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             var directoryBrowseCommand:DirectoryBrowseCommand = new DirectoryBrowseCommand(directoryBrowseCommandData);
             _appModel.commandExecutor.pushCommand(directoryBrowseCommand);
 
-            _appModel.commandExecutor.pushMethod(function ():Boolean {
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
                 if (directoryBrowseCommand.browseCanceled)
                 {
                     _appModel.commandExecutor.removeAllCommands();
@@ -195,7 +206,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             directoryListingCommandData.fileModel = _appModel.fileModel;
             _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
 
-            _appModel.commandExecutor.pushMethod(function ():Boolean {
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
                 if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
                     return true;
                 _appModel.commandExecutor.removeAllCommands();
