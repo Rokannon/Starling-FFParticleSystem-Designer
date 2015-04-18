@@ -6,5 +6,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.enum
     {
         public static const APPLICATION_FOLDER_CORRUPTED:String = "Program folder corrupted.\nTry to reinstall application.";
         public static const BAD_CONFIG:String = "Error loading or parsing application config.";
+        public static const BAD_PARTICLE_FOLDER:String = "There was error opening particle system directory.";
     }
 }

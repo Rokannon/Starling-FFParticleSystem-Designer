@@ -5,6 +5,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommandData;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryBrowse.DirectoryBrowseCommand;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryBrowse.DirectoryBrowseCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
@@ -63,6 +65,38 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             setupLocalStorage(false);
             configController.loadConfig();
             loadParticleSystem();
+        }
+
+        public function browseParticleSystem():void
+        {
+            var directoryBrowseCommandData:DirectoryBrowseCommandData = new DirectoryBrowseCommandData();
+            directoryBrowseCommandData.browseTitle = "Select Folder";
+            var particleDirectory:File = new File();
+            directoryBrowseCommandData.directoryToBrowse = particleDirectory;
+            var directoryBrowseCommand:DirectoryBrowseCommand = new DirectoryBrowseCommand(directoryBrowseCommandData);
+            _appModel.commandExecutor.pushCommand(directoryBrowseCommand);
+
+            _appModel.commandExecutor.pushMethod(function ():Boolean {
+                if (directoryBrowseCommand.browseCanceled)
+                {
+                    _appModel.commandExecutor.removeAllCommands();
+                    return false;
+                }
+                else if (_appModel.commandExecutor.lastCommandResult == CommandState.FAILED)
+                {
+                    _appModel.commandExecutor.removeAllCommands();
+                    var buttonCollection:ListCollection = new ListCollection([{label: "Ok"}]);
+                    Alert.show(ErrorMessage.BAD_PARTICLE_FOLDER, ErrorTitle.ERROR, buttonCollection);
+                    return false;
+                }
+                else
+                {
+                    _appModel.particleModel.particleDirectory = particleDirectory;
+                    configController.saveConfig(); // TODO Must be performed only after P.S. loaded.
+                    reloadParticleSystem();
+                    return true;
+                }
+            });
         }
 
         public function openParticleSystemLocation():void
@@ -124,6 +158,11 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         }
 
         public function reloadParticleSystem():void
+        {
+            _appModel.commandExecutor.pushMethod(deReloadParticleSystem);
+        }
+
+        private function deReloadParticleSystem():void
         {
             unloadParticleSystem();
             configController.loadConfig();

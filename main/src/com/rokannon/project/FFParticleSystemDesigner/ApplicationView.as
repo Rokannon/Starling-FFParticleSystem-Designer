@@ -19,6 +19,7 @@ package com.rokannon.project.FFParticleSystemDesigner
         private var _appController:ApplicationController;
         private var _reloadButton:Button;
         private var _openButton:Button;
+        private var _browseButton:Button;
 
         public function ApplicationView()
         {
@@ -62,13 +63,23 @@ package com.rokannon.project.FFParticleSystemDesigner
             layoutGroup.addChild(_reloadButton);
             _reloadButton.addEventListener(Event.TRIGGERED, onReloadButtonTriggered);
 
+            var anchorLayoutData:AnchorLayoutData;
+
             _openButton = new Button();
             _openButton.label = "Open";
-            var anchorLayoutData:AnchorLayoutData = new AnchorLayoutData(NaN, 10, 10);
+            anchorLayoutData = new AnchorLayoutData(NaN, 10, 10);
             anchorLayoutData.bottomAnchorDisplayObject = _reloadButton;
             _openButton.layoutData = anchorLayoutData;
             layoutGroup.addChild(_openButton);
             _openButton.addEventListener(Event.TRIGGERED, onOpenButtonTriggered);
+
+            _browseButton = new Button();
+            _browseButton.label = "Browse";
+            anchorLayoutData = new AnchorLayoutData(NaN, 10, 10);
+            anchorLayoutData.bottomAnchorDisplayObject = _openButton;
+            _browseButton.layoutData = anchorLayoutData;
+            layoutGroup.addChild(_browseButton);
+            _browseButton.addEventListener(Event.TRIGGERED, onBrowseButtonTriggered);
         }
 
         private function onReloadButtonTriggered(event:Event):void
@@ -79,6 +90,11 @@ package com.rokannon.project.FFParticleSystemDesigner
         private function onOpenButtonTriggered(event:Event):void
         {
             _appController.openParticleSystemLocation();
+        }
+
+        private function onBrowseButtonTriggered(event:Event):void
+        {
+            _appController.browseParticleSystem();
         }
     }
 }
