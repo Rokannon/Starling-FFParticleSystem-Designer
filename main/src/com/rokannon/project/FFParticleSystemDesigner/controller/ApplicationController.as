@@ -1,5 +1,6 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
+    import com.rokannon.core.command.enum.CommandState;
     import com.rokannon.core.utils.getProperty;
     import com.rokannon.core.utils.requireProperty;
     import com.rokannon.core.utils.string.getExtension;
@@ -10,6 +11,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommandData;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorMessage;
+    import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorTitle;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommand;
@@ -20,10 +23,15 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import de.flintfabrik.starling.display.FFParticleSystem;
     import de.flintfabrik.starling.display.FFParticleSystem.SystemOptions;
 
+    import feathers.controls.Alert;
+    import feathers.data.ListCollection;
+
+    import flash.desktop.NativeApplication;
     import flash.display.Bitmap;
     import flash.filesystem.File;
 
     import starling.core.Starling;
+    import starling.events.Event;
     import starling.textures.Texture;
     import starling.textures.TextureAtlas;
 
@@ -65,14 +73,20 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
+                var defaultConfigFile:File = File.applicationDirectory.resolvePath("default_config.json");
+                if (!defaultConfigFile.exists)
+                    return false;
+                var demoParticleDirectory:File = File.applicationDirectory.resolvePath("demo_particle");
+                if (!demoParticleDirectory.exists)
+                    return false;
                 var configFile:File = File.applicationStorageDirectory.resolvePath("config.json");
-                _appModel.firstRun = !configFile.exists;
+                _appModel.firstRun = !configFile.exists || configFile.modificationDate.time < defaultConfigFile.modificationDate.time;
                 if (_appModel.firstRun || overwrite)
                 {
                     var fileCopyCommandData:FileCopyCommandData;
                     fileCopyCommandData = new FileCopyCommandData();
                     fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
-                    fileCopyCommandData.fileToCopy = File.applicationDirectory.resolvePath("default_config.json");
+                    fileCopyCommandData.fileToCopy = defaultConfigFile;
                     fileCopyCommandData.newFileName = "config.json";
                     fileCopyCommandData.overwrite = true;
                     _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
@@ -84,12 +98,27 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
                     fileCopyCommandData = new FileCopyCommandData();
                     fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
-                    fileCopyCommandData.fileToCopy = File.applicationDirectory.resolvePath("demo_particle");
+                    fileCopyCommandData.fileToCopy = demoParticleDirectory;
                     fileCopyCommandData.newFileName = null;
                     fileCopyCommandData.overwrite = true;
                     _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
                 }
                 return true;
+            });
+
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
+                    return true;
+                _appModel.commandExecutor.removeAllCommands();
+                var buttonCollection:ListCollection = new ListCollection([{label: "Exit"}]);
+                var alert:Alert = Alert.show(ErrorMessage.APPLICATION_FOLDER_CORRUPTED, ErrorTitle.FATAL_ERROR,
+                    buttonCollection);
+                alert.addEventListener(Event.CLOSE, function (event:Event):void
+                {
+                    NativeApplication.nativeApplication.exit();
+                });
+                return false;
             });
         }
 
@@ -142,6 +171,11 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadParticleSystem():Boolean
         {
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                return _appModel.particleModel.particleDirectory.exists;
+            });
+
             var directoryListingCommandData:DirectoryListingCommandData = new DirectoryListingCommandData();
             directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
             directoryListingCommandData.fileModel = _appModel.fileModel;

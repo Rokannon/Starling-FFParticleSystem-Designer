@@ -1,7 +1,7 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller.startStarling
 {
     import com.rokannon.core.command.CommandBase;
-    import com.rokannon.project.FFParticleSystemDesigner.*;
+    import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
 
     import starling.core.Starling;
     import starling.events.Event;
