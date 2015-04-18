@@ -1,8 +1,6 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
     import com.rokannon.core.command.enum.CommandState;
-    import com.rokannon.core.utils.getProperty;
-    import com.rokannon.core.utils.requireProperty;
     import com.rokannon.core.utils.string.getExtension;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
@@ -39,6 +37,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
     public class ApplicationController
     {
+        public const configController:ConfigController = new ConfigController();
+
         private var _appModel:ApplicationModel;
         private var _appView:ApplicationView;
 
@@ -50,6 +50,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             _appModel = appModel;
             _appView = appView;
+            configController.connect(_appModel, _appView, this);
         }
 
         public function startApplication():void
@@ -60,7 +61,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             FFParticleSystem.init(4096, false, 4096, 16);
 
             setupLocalStorage(false);
-            loadConfig();
+            configController.loadConfig();
             loadParticleSystem();
         }
 
@@ -125,7 +126,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         public function reloadParticleSystem():void
         {
             unloadParticleSystem();
-            loadConfig();
+            configController.loadConfig();
             loadParticleSystem();
         }
 
@@ -141,48 +142,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 _appModel.particleModel.particleTexture.dispose();
                 _appModel.particleModel.particleTexture = null;
             }
-        }
-
-        public function loadConfig():void
-        {
-            var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
-            fileLoadCommandData.fileModel = _appModel.fileModel;
-            fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
-
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                try
-                {
-                    var json:Object = JSON.parse(_appModel.fileModel.fileContent.toString());
-                    _appModel.particleModel.particleDirectory = File.applicationStorageDirectory.resolvePath(requireProperty(json,
-                        "particleDirectory"));
-                    _appModel.particleModel.appendFromObject = getProperty(json, "appendFromObject", null);
-                }
-                catch (error:Error)
-                {
-                    return false;
-                }
-                return true;
-            });
-
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
-                    return true;
-                _appModel.commandExecutor.removeAllCommands();
-                var buttonCollection:ListCollection = new ListCollection([{label: "Reset"}, {label: "Close"}]);
-                var alert:Alert = Alert.show(ErrorMessage.BAD_CONFIG, ErrorTitle.ERROR, buttonCollection);
-                alert.addEventListener(Event.CLOSE, function (event:Event):void
-                {
-                    if (event.data.label == "Reset")
-                    {
-                        setupLocalStorage(true);
-                        reloadParticleSystem();
-                    }
-                });
-                return false;
-            });
         }
 
         public function loadParticleSystem():void
