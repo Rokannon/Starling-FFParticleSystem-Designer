@@ -81,7 +81,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             {
                 if (event.data.label == "Reset")
                 {
-                    _appController.setupLocalStorage(true);
+                    _appController.localStorageController.setupLocalStorage(true);
                     _appController.reloadParticleSystem();
                 }
             });
