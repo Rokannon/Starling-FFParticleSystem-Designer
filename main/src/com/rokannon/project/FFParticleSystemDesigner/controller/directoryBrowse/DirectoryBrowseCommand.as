@@ -25,7 +25,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.directoryBrowse
             _data.directoryToBrowse.browseForDirectory(_data.browseTitle);
         }
 
-        private function onBrowseError(event:IOErrorEvent):void
+        private function onBrowseError(event:Event):void
         {
             _data.directoryToBrowse.removeEventListener(Event.SELECT, onBrowseComplete);
             _data.directoryToBrowse.removeEventListener(IOErrorEvent.IO_ERROR, onBrowseError);
