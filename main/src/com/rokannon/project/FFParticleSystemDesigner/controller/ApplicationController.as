@@ -59,6 +59,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             _appModel.commandExecutor.eventExecuteStart.add(_appView.lockButtons);
             _appModel.commandExecutor.eventExecuteEnd.add(_appView.unlockButtons);
+            if (_appModel.commandExecutor.isExecuting)
+                _appView.lockButtons();
 
             FFParticleSystem.init(4096, false, 4096, 16);
 
