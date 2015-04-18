@@ -195,6 +195,15 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             directoryListingCommandData.fileModel = _appModel.fileModel;
             _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
 
+            _appModel.commandExecutor.pushMethod(function ():Boolean {
+                if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
+                    return true;
+                _appModel.commandExecutor.removeAllCommands();
+                var buttonCollection:ListCollection = new ListCollection([{label: "Ok"}]);
+                Alert.show(ErrorMessage.BAD_PARTICLE_FOLDER, ErrorTitle.ERROR, buttonCollection);
+                return false;
+            });
+
             _appModel.commandExecutor.pushMethod(doLoadPexFile);
             _appModel.commandExecutor.pushMethod(doLoadAtlasXmlFile);
             _appModel.commandExecutor.pushMethod(doLoadTexture);
