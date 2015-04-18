@@ -5,5 +5,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.enum
     public class ErrorMessage extends StaticClassBase
     {
         public static const APPLICATION_FOLDER_CORRUPTED:String = "Program folder corrupted.\nTry to reinstall application.";
+        public static const BAD_CONFIG:String = "Error loading or parsing application config.";
     }
 }

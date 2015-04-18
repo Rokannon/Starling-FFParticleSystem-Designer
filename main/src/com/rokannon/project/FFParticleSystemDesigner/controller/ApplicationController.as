@@ -136,8 +136,11 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appModel.particleModel.particleAtlasXml = null;
             _appModel.particleModel.particleDirectory = null;
             _appModel.particleModel.particlePex = null;
-            _appModel.particleModel.particleTexture.dispose();
-            _appModel.particleModel.particleTexture = null;
+            if (_appModel.particleModel.particleTexture != null)
+            {
+                _appModel.particleModel.particleTexture.dispose();
+                _appModel.particleModel.particleTexture = null;
+            }
         }
 
         public function loadConfig():void
@@ -162,6 +165,24 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 }
                 return true;
             });
+
+            _appModel.commandExecutor.pushMethod(function ():Boolean
+            {
+                if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
+                    return true;
+                _appModel.commandExecutor.removeAllCommands();
+                var buttonCollection:ListCollection = new ListCollection([{label: "Reset"}, {label: "Close"}]);
+                var alert:Alert = Alert.show(ErrorMessage.BAD_CONFIG, ErrorTitle.ERROR, buttonCollection);
+                alert.addEventListener(Event.CLOSE, function (event:Event):void
+                {
+                    if (event.data.label == "Reset")
+                    {
+                        setupLocalStorage(true);
+                        reloadParticleSystem();
+                    }
+                });
+                return false;
+            });
         }
 
         public function loadParticleSystem():void
@@ -171,11 +192,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadParticleSystem():Boolean
         {
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                return _appModel.particleModel.particleDirectory.exists;
-            });
-
             var directoryListingCommandData:DirectoryListingCommandData = new DirectoryListingCommandData();
             directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
             directoryListingCommandData.fileModel = _appModel.fileModel;

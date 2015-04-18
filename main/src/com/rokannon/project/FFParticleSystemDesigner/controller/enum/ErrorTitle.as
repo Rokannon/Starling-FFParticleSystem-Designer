@@ -5,5 +5,6 @@ package com.rokannon.project.FFParticleSystemDesigner.controller.enum
     public class ErrorTitle extends StaticClassBase
     {
         public static const FATAL_ERROR:String = "Fatal Error";
+        public static const ERROR:String = "Error";
     }
 }
