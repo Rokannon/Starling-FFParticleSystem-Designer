@@ -1,5 +1,6 @@
 package com.rokannon.project.FFParticleSystemDesigner
 {
+    import com.rokannon.core.command.enum.CommandState;
     import com.rokannon.project.FFParticleSystemDesigner.controller.ApplicationController;
     import com.rokannon.project.FFParticleSystemDesigner.controller.startStarling.StartStarlingCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.startStarling.StartStarlingCommandData;
@@ -34,13 +35,16 @@ package com.rokannon.project.FFParticleSystemDesigner
             startStarlingCommandData.appModel = _appModel;
             _appModel.commandExecutor.pushCommand(new StartStarlingCommand(startStarlingCommandData));
 
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                var applicationView:ApplicationView = _appModel.starlingInstance.root as ApplicationView;
-                applicationView.connect(_appController);
-                _appController.connect(_appModel, applicationView);
-                _appController.startApplication();
-            });
+            _appModel.commandExecutor.pushMethod(doStartApplication, CommandState.COMPLETE);
+        }
+
+        private function doStartApplication():Boolean
+        {
+            var applicationView:ApplicationView = _appModel.starlingInstance.root as ApplicationView;
+            applicationView.connect(_appController);
+            _appController.connect(_appModel, applicationView);
+            _appController.startApplication();
+            return true;
         }
     }
 }

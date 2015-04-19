@@ -36,14 +36,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function setupLocalStorage(overwrite:Boolean):void
+        public function setupLocalStorage(overwrite:Boolean):Boolean
         {
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                doSetupLocalStorage(overwrite);
-                return true;
-            });
-            _appModel.commandExecutor.pushMethod(handleSetupError, CommandState.FAILED);
+            _appModel.commandExecutor.pushMethod(doSetupLocalStorage, null, overwrite);
+            return true;
         }
 
         private function doSetupLocalStorage(overwrite:Boolean):Boolean
@@ -79,6 +75,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileCopyCommandData.overwrite = true;
                 _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData), CommandState.COMPLETE);
             }
+            _appModel.commandExecutor.pushMethod(handleSetupError, CommandState.FAILED);
             return true;
         }
 

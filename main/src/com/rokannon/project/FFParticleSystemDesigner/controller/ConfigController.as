@@ -38,20 +38,27 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function loadConfig():void
+        public function loadConfig():Boolean
+        {
+            _appModel.commandExecutor.pushMethod(doLoadConfig);
+            return true;
+        }
+
+        public function saveConfig():Boolean
+        {
+            _appModel.commandExecutor.pushMethod(doSaveConfig);
+            return true;
+        }
+
+        private function doLoadConfig():Boolean
         {
             var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
             fileLoadCommandData.fileModel = _appModel.fileModel;
             fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
-
-            _appModel.commandExecutor.pushMethod(parseConfig);
-            _appModel.commandExecutor.pushMethod(handleParseError);
-        }
-
-        public function saveConfig():void
-        {
-            _appModel.commandExecutor.pushMethod(doSaveConfig);
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData), CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(parseConfig, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(handleParseError, CommandState.FAILED);
+            return true;
         }
 
         private function parseConfig():Boolean
@@ -72,18 +79,13 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function handleParseError():Boolean
         {
-            if (_appModel.commandExecutor.lastCommandResult == CommandState.COMPLETE)
-                return true;
             _appModel.commandExecutor.removeAllCommands();
             var buttonCollection:ListCollection = new ListCollection([{label: "Reset"}, {label: "Close"}]);
             var alert:Alert = Alert.show(ErrorMessage.BAD_CONFIG, ErrorTitle.ERROR, buttonCollection);
             alert.addEventListener(Event.CLOSE, function (event:Event):void
             {
                 if (event.data.label == "Reset")
-                {
-                    _appController.localStorageController.setupLocalStorage(true);
-                    _appController.reloadParticleSystem();
-                }
+                    _appController.resetParticleSystem();
             });
             return false;
         }
@@ -101,7 +103,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             var fileSaveCommandData:FileSaveCommandData = new FileSaveCommandData();
             fileSaveCommandData.bytesToWrite = bytes;
             fileSaveCommandData.fileToSaveTo = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveCommandData));
+            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveCommandData), CommandState.COMPLETE);
             return true;
         }
     }
