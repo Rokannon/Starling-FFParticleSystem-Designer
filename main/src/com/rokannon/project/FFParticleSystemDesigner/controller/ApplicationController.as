@@ -226,7 +226,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
-                _appModel.commandExecutor.pushMethod(localStorageController.setupLocalStorage, CommandState.COMPLETE, true);
+                _appModel.commandExecutor.pushMethod(localStorageController.setupLocalStorage, CommandState.COMPLETE,
+                    true);
                 _appModel.commandExecutor.pushMethod(configController.loadConfig, CommandState.COMPLETE);
                 _appModel.commandExecutor.pushMethod(loadParticleSystem, CommandState.COMPLETE);
                 return true;

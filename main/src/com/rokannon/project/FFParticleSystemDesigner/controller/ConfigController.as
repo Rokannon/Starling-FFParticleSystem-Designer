@@ -40,13 +40,13 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         public function loadConfig():Boolean
         {
-            _appModel.commandExecutor.pushMethod(doLoadConfig);
+            _appModel.commandExecutor.pushMethod(doLoadConfig, CommandState.COMPLETE);
             return true;
         }
 
         public function saveConfig():Boolean
         {
-            _appModel.commandExecutor.pushMethod(doSaveConfig);
+            _appModel.commandExecutor.pushMethod(doSaveConfig, CommandState.COMPLETE);
             return true;
         }
 
