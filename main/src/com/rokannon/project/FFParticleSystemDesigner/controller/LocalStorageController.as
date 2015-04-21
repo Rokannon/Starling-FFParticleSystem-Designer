@@ -63,11 +63,15 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileCopyCommandData.overwrite = true;
                 _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData), CommandState.COMPLETE);
 
-                var directoryDeleteCommandData:DirectoryDeleteCommandData = new DirectoryDeleteCommandData();
-                directoryDeleteCommandData.deleteDirectoryContents = true;
-                directoryDeleteCommandData.directoryToDelete = File.applicationStorageDirectory.resolvePath("demo_particle");
-                _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData),
-                    CommandState.COMPLETE);
+                var directoryToDelete:File = File.applicationStorageDirectory.resolvePath("demo_particle");
+                if (directoryToDelete.exists)
+                {
+                    var directoryDeleteCommandData:DirectoryDeleteCommandData = new DirectoryDeleteCommandData();
+                    directoryDeleteCommandData.deleteDirectoryContents = true;
+                    directoryDeleteCommandData.directoryToDelete = directoryToDelete;
+                    _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData),
+                        CommandState.COMPLETE);
+                }
 
                 fileCopyCommandData = new FileCopyCommandData();
                 fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
