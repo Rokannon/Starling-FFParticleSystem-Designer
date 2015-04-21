@@ -85,7 +85,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             alert.addEventListener(Event.CLOSE, function (event:Event):void
             {
                 if (event.data.label == "Reset")
-                    _appController.resetParticleSystem();
+                    _appController.particleSystemController.resetParticleSystem();
             });
             return false;
         }

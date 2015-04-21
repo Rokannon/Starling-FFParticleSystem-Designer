@@ -95,22 +95,22 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         private function onReloadButtonTriggered(event:Event):void
         {
-            _appController.loadParticleSystem();
+            _appController.particleSystemController.loadParticleSystem();
         }
 
         private function onOpenButtonTriggered(event:Event):void
         {
-            _appController.openParticleSystemLocation();
+            _appController.particleSystemController.openParticleSystemLocation();
         }
 
         private function onBrowseButtonTriggered(event:Event):void
         {
-            _appController.browseParticleSystem();
+            _appController.particleSystemController.browseParticleSystem();
         }
 
         private function onResetButtonTriggered(event:Event):void
         {
-            _appController.resetParticleSystem();
+            _appController.particleSystemController.resetParticleSystem();
         }
     }
 }
