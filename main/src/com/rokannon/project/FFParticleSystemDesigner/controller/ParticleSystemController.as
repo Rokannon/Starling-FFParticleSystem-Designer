@@ -51,30 +51,39 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         public function loadParticleSystem():Boolean
         {
-            _appModel.commandExecutor.pushMethod(doLoadParticleSystem);
+            _appModel.commandExecutor.pushMethod(doLoadParticleSystem, CommandState.COMPLETE);
             return true;
         }
 
-        public function resetParticleSystem():void
+        public function resetParticleSystem():Boolean
         {
-            _appModel.commandExecutor.pushMethod(function ():Boolean
-            {
-                _appModel.commandExecutor.pushMethod(_appController.localStorageController.setupLocalStorage,
-                    CommandState.COMPLETE, true);
-                _appModel.commandExecutor.pushMethod(_appController.configController.loadConfig, CommandState.COMPLETE);
-                _appModel.commandExecutor.pushMethod(loadParticleSystem, CommandState.COMPLETE);
-                return true;
-            });
+            _appModel.commandExecutor.pushMethod(_appController.localStorageController.setupLocalStorage,
+                CommandState.COMPLETE, true);
+            _appModel.commandExecutor.pushMethod(_appController.configController.loadConfig, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(loadParticleSystem, CommandState.COMPLETE);
+            return true;
         }
 
-        public function browseParticleSystem():void
+        public function browseParticleSystem():Boolean
+        {
+            _appModel.commandExecutor.pushMethod(doBrowseParticleSystem, CommandState.COMPLETE);
+            return true;
+        }
+
+        public function openParticleSystemLocation():Boolean
+        {
+            _appModel.particleModel.particleDirectory.openWithDefaultApplication();
+            return true;
+        }
+
+        private function doBrowseParticleSystem():Boolean
         {
             var directoryBrowseCommandData:DirectoryBrowseCommandData = new DirectoryBrowseCommandData();
             directoryBrowseCommandData.browseTitle = "Select Folder";
             var particleDirectory:File = new File();
             directoryBrowseCommandData.directoryToBrowse = particleDirectory;
             var directoryBrowseCommand:DirectoryBrowseCommand = new DirectoryBrowseCommand(directoryBrowseCommandData);
-            _appModel.commandExecutor.pushCommand(directoryBrowseCommand);
+            _appModel.commandExecutor.pushCommand(directoryBrowseCommand, CommandState.COMPLETE);
 
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
@@ -96,12 +105,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                     loadParticleSystem();
                     return true;
                 }
-            });
-        }
-
-        public function openParticleSystemLocation():void
-        {
-            _appModel.particleModel.particleDirectory.openWithDefaultApplication();
+            }, CommandState.COMPLETE);
+            return true;
         }
 
         private function doLoadParticleSystem():Boolean

@@ -28,7 +28,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             particleSystemController.connect(_appModel, _appView, this);
         }
 
-        public function startApplication():void
+        public function startApplication():Boolean
         {
             _appModel.commandExecutor.eventExecuteStart.add(_appView.lockButtons);
             _appModel.commandExecutor.eventExecuteEnd.add(_appView.unlockButtons);
@@ -40,6 +40,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appModel.commandExecutor.pushMethod(localStorageController.setupLocalStorage, null, false);
             _appModel.commandExecutor.pushMethod(configController.loadConfig, CommandState.COMPLETE);
             _appModel.commandExecutor.pushMethod(particleSystemController.loadParticleSystem, CommandState.COMPLETE);
+
+            return true;
         }
     }
 }
