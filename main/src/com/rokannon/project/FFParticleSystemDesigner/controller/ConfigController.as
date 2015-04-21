@@ -1,6 +1,5 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
-    import com.rokannon.core.command.enum.CommandState;
     import com.rokannon.core.utils.getProperty;
     import com.rokannon.core.utils.requireProperty;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
@@ -38,26 +37,27 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function loadConfig():Boolean
+        public function loadConfig(params:Object):Boolean
         {
-            _appModel.commandExecutor.pushMethod(doLoadConfig, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(doLoadConfig, true, params);
             return true;
         }
 
         public function saveConfig():Boolean
         {
-            _appModel.commandExecutor.pushMethod(doSaveConfig, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(doSaveConfig);
             return true;
         }
 
-        private function doLoadConfig():Boolean
+        private function doLoadConfig(params:Object):Boolean
         {
             var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
             fileLoadCommandData.fileModel = _appModel.fileModel;
             fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData), CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(parseConfig, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(handleParseError, CommandState.FAILED);
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+            _appModel.commandExecutor.pushMethod(parseConfig);
+            if (getProperty(params, "handleErrors", true))
+                _appModel.commandExecutor.pushMethod(handleParseError, false);
             return true;
         }
 
@@ -103,7 +103,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             var fileSaveCommandData:FileSaveCommandData = new FileSaveCommandData();
             fileSaveCommandData.bytesToWrite = bytes;
             fileSaveCommandData.fileToSaveTo = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveCommandData), CommandState.COMPLETE);
+            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveCommandData));
             return true;
         }
     }

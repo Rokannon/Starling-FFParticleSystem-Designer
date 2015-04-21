@@ -95,7 +95,7 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         private function onReloadButtonTriggered(event:Event):void
         {
-            _appController.particleSystemController.loadParticleSystem();
+            _appController.particleSystemController.loadParticleSystem({});
         }
 
         private function onOpenButtonTriggered(event:Event):void

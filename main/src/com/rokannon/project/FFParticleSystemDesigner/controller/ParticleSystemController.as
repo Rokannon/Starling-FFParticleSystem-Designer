@@ -1,6 +1,7 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
     import com.rokannon.core.command.enum.CommandState;
+    import com.rokannon.core.utils.getProperty;
     import com.rokannon.core.utils.string.getExtension;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
@@ -49,24 +50,24 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function loadParticleSystem():Boolean
+        public function loadParticleSystem(params:Object):Boolean
         {
-            _appModel.commandExecutor.pushMethod(doLoadParticleSystem, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(doLoadParticleSystem, true, params);
             return true;
         }
 
         public function resetParticleSystem():Boolean
         {
             _appModel.commandExecutor.pushMethod(_appController.localStorageController.setupLocalStorage,
-                CommandState.COMPLETE, true);
-            _appModel.commandExecutor.pushMethod(_appController.configController.loadConfig, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(loadParticleSystem, CommandState.COMPLETE);
+                true, {overwrite: true});
+            _appModel.commandExecutor.pushMethod(_appController.configController.loadConfig, true, {});
+            _appModel.commandExecutor.pushMethod(loadParticleSystem, true, {});
             return true;
         }
 
         public function browseParticleSystem():Boolean
         {
-            _appModel.commandExecutor.pushMethod(doBrowseParticleSystem, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(doBrowseParticleSystem);
             return true;
         }
 
@@ -83,7 +84,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             var particleDirectory:File = new File();
             directoryBrowseCommandData.directoryToBrowse = particleDirectory;
             var directoryBrowseCommand:DirectoryBrowseCommand = new DirectoryBrowseCommand(directoryBrowseCommandData);
-            _appModel.commandExecutor.pushCommand(directoryBrowseCommand, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushCommand(directoryBrowseCommand);
 
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
@@ -92,7 +93,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                     _appModel.commandExecutor.removeAllCommands();
                     return false;
                 }
-                else if (_appModel.commandExecutor.lastCommandResult == CommandState.FAILED)
+                else if (!_appModel.commandExecutor.lastCommandResult)
                 {
                     _appModel.commandExecutor.removeAllCommands();
                     var buttonCollection:ListCollection = new ListCollection([{label: "Ok"}]);
@@ -102,29 +103,34 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 else
                 {
                     _appModel.particleModel.particleDirectory = particleDirectory;
-                    loadParticleSystem();
+                    loadParticleSystem({});
                     return true;
                 }
-            }, CommandState.COMPLETE);
+            });
             return true;
         }
 
-        private function doLoadParticleSystem():Boolean
+        private function doLoadParticleSystem(params:Object):Boolean
         {
-            _appModel.commandExecutor.pushMethod(doUnloadParticleSystem, CommandState.COMPLETE);
+            var handleErrors:Boolean = getProperty(params, "handleErrors", true);
+            _appModel.commandExecutor.pushMethod(doUnloadParticleSystem);
             var directoryListingCommandData:DirectoryListingCommandData = new DirectoryListingCommandData();
             directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
             directoryListingCommandData.fileModel = _appModel.fileModel;
             _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
-            _appModel.commandExecutor.pushMethod(handleParticleDirectoryError, CommandState.FAILED);
-            _appModel.commandExecutor.pushMethod(doLoadPexFile, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(handlePexFileError, CommandState.FAILED);
-            _appModel.commandExecutor.pushMethod(doLoadAtlasXmlFile, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(handleAtlasXmlError, CommandState.FAILED);
-            _appModel.commandExecutor.pushMethod(doLoadTexture, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(handleLoadTextureError, CommandState.FAILED);
-            _appModel.commandExecutor.pushMethod(doCreateParticleSystem, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(_appController.configController.saveConfig, CommandState.COMPLETE);
+            if (handleErrors)
+                _appModel.commandExecutor.pushMethod(handleParticleDirectoryError, false);
+            _appModel.commandExecutor.pushMethod(doLoadPexFile);
+            if (handleErrors)
+                _appModel.commandExecutor.pushMethod(handlePexFileError, false);
+            _appModel.commandExecutor.pushMethod(doLoadAtlasXmlFile);
+            if (handleErrors)
+                _appModel.commandExecutor.pushMethod(handleAtlasXmlError, false);
+            _appModel.commandExecutor.pushMethod(doLoadTexture);
+            if (handleErrors)
+                _appModel.commandExecutor.pushMethod(handleLoadTextureError, false);
+            _appModel.commandExecutor.pushMethod(doCreateParticleSystem);
+            _appModel.commandExecutor.pushMethod(_appController.configController.saveConfig);
             return true;
         }
 
@@ -147,8 +153,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             }
             if (fileLoadCommandData.fileToLoad == null)
                 return false;
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData), CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(parsePexFile, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+            _appModel.commandExecutor.pushMethod(parsePexFile);
             return true;
         }
 
@@ -185,7 +191,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             if (fileLoadCommandData.fileToLoad == null)
                 return true; // No XML is OK.
             _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
-            _appModel.commandExecutor.pushMethod(parseAtlasXml, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(parseAtlasXml);
             return true;
         }
 
@@ -221,18 +227,17 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
                 fileLoadCommandData.fileModel = _appModel.fileModel;
                 fileLoadCommandData.fileToLoad = file;
-                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData), CommandState.COMPLETE);
+                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
 
                 var createBitmapCommandData:CreateBitmapCommandData = new CreateBitmapCommandData();
                 createBitmapCommandData.fileModel = _appModel.fileModel;
-                _appModel.commandExecutor.pushCommand(new CreateBitmapCommand(createBitmapCommandData),
-                    CommandState.COMPLETE);
+                _appModel.commandExecutor.pushCommand(new CreateBitmapCommand(createBitmapCommandData));
 
                 _appModel.commandExecutor.pushMethod(function ():Boolean
                 {
                     bitmaps.push(_appModel.fileModel.fileBitmap);
                     return true;
-                }, CommandState.COMPLETE);
+                });
             }
             _appModel.commandExecutor.pushMethod(function ():Boolean
             {
@@ -248,7 +253,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 _appModel.particleModel.particleTexture = textureAtlas.texture;
                 _appModel.particleModel.particleAtlasXml = AtlasBuilder.atlasXml;
                 return true;
-            }, CommandState.COMPLETE);
+            });
             return true;
         }
 

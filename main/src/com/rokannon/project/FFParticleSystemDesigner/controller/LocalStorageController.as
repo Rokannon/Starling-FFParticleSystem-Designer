@@ -1,6 +1,7 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
-    import com.rokannon.core.command.enum.CommandState;
+    import com.rokannon.core.utils.getProperty;
+    import com.rokannon.core.utils.requireProperty;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
@@ -36,15 +37,17 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function setupLocalStorage(overwrite:Boolean):Boolean
+        public function setupLocalStorage(params:Object):Boolean
         {
-            _appModel.commandExecutor.pushMethod(doSetupLocalStorage, CommandState.COMPLETE, overwrite);
-            _appModel.commandExecutor.pushMethod(handleSetupError, CommandState.FAILED);
+            _appModel.commandExecutor.pushMethod(doSetupLocalStorage, true, params);
+            if (getProperty(params, "handleErrors", true))
+                _appModel.commandExecutor.pushMethod(handleSetupError, false);
             return true;
         }
 
-        private function doSetupLocalStorage(overwrite:Boolean):Boolean
+        private function doSetupLocalStorage(params:Object):Boolean
         {
+            var overwrite:Boolean = requireProperty(params, "overwrite");
             var defaultConfigFile:File = File.applicationDirectory.resolvePath("default_config.json");
             if (!defaultConfigFile.exists)
                 return false;
@@ -61,7 +64,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileCopyCommandData.fileToCopy = defaultConfigFile;
                 fileCopyCommandData.newFileName = "config.json";
                 fileCopyCommandData.overwrite = true;
-                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData), CommandState.COMPLETE);
+                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
 
                 var directoryToDelete:File = File.applicationStorageDirectory.resolvePath("demo_particle");
                 if (directoryToDelete.exists)
@@ -69,8 +72,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                     var directoryDeleteCommandData:DirectoryDeleteCommandData = new DirectoryDeleteCommandData();
                     directoryDeleteCommandData.deleteDirectoryContents = true;
                     directoryDeleteCommandData.directoryToDelete = directoryToDelete;
-                    _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData),
-                        CommandState.COMPLETE);
+                    _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData));
                 }
 
                 fileCopyCommandData = new FileCopyCommandData();
@@ -78,7 +80,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileCopyCommandData.fileToCopy = demoParticleDirectory;
                 fileCopyCommandData.newFileName = null;
                 fileCopyCommandData.overwrite = true;
-                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData), CommandState.COMPLETE);
+                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
             }
             return true;
         }

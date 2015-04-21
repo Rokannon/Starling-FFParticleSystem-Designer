@@ -1,6 +1,5 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
-    import com.rokannon.core.command.enum.CommandState;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
 
@@ -37,9 +36,9 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
             FFParticleSystem.init(4096, false, 4096, 16);
 
-            _appModel.commandExecutor.pushMethod(localStorageController.setupLocalStorage, null, false);
-            _appModel.commandExecutor.pushMethod(configController.loadConfig, CommandState.COMPLETE);
-            _appModel.commandExecutor.pushMethod(particleSystemController.loadParticleSystem, CommandState.COMPLETE);
+            _appModel.commandExecutor.pushMethod(localStorageController.setupLocalStorage, true, {overwrite: false});
+            _appModel.commandExecutor.pushMethod(configController.loadConfig, true, {});
+            _appModel.commandExecutor.pushMethod(particleSystemController.loadParticleSystem, true, {});
 
             return true;
         }
