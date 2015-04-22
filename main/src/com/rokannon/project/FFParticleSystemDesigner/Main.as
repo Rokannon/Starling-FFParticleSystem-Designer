@@ -40,7 +40,7 @@ package com.rokannon.project.FFParticleSystemDesigner
             var applicationView:ApplicationView = _appModel.starlingInstance.root as ApplicationView;
             applicationView.connect(_appController);
             _appController.connect(_appModel, applicationView);
-            _appModel.commandExecutor.pushMethod(_appController.startApplication);
+            _appController.startApplication();
             return true;
         }
     }

@@ -95,7 +95,7 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         private function onReloadButtonTriggered(event:Event):void
         {
-            _appController.particleSystemController.loadParticleSystem({});
+            _appController.particleSystemController.loadParticleSystem(true);
         }
 
         private function onOpenButtonTriggered(event:Event):void
@@ -105,7 +105,7 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         private function onBrowseButtonTriggered(event:Event):void
         {
-            _appController.particleSystemController.browseParticleSystem();
+            _appController.particleSystemController.browseParticleSystem(true);
         }
 
         private function onResetButtonTriggered(event:Event):void

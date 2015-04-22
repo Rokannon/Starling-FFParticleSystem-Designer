@@ -1,7 +1,5 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
-    import com.rokannon.core.utils.getProperty;
-    import com.rokannon.core.utils.requireProperty;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
@@ -10,6 +8,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
+    import com.rokannon.project.FFParticleSystemDesigner.model.params.SetupLocalStorageParams;
 
     import feathers.controls.Alert;
     import feathers.data.ListCollection;
@@ -37,17 +36,22 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function setupLocalStorage(params:Object):Boolean
+        //
+        // Setup Local Storage
+        //
+
+        public function setupLocalStorage(handleErrors:Boolean, overwrite:Boolean):void
         {
-            _appModel.commandExecutor.pushMethod(doSetupLocalStorage, true, params);
-            if (getProperty(params, "handleErrors", true))
-                _appModel.commandExecutor.pushMethod(handleSetupError, false);
-            return true;
+            var setupLocalStorageParams:SetupLocalStorageParams = new SetupLocalStorageParams();
+            setupLocalStorageParams.handleErrors = handleErrors;
+            setupLocalStorageParams.overwrite = overwrite;
+            _appModel.commandExecutor.pushMethod(doSetupLocalStorage, true, setupLocalStorageParams);
+            if (!handleErrors)
+                _appModel.commandExecutor.pushMethod(_appController.resetError, false);
         }
 
-        private function doSetupLocalStorage(params:Object):Boolean
+        private function doSetupLocalStorage(setupLocalStorageParams:SetupLocalStorageParams):Boolean
         {
-            var overwrite:Boolean = requireProperty(params, "overwrite");
             var defaultConfigFile:File = File.applicationDirectory.resolvePath("default_config.json");
             if (!defaultConfigFile.exists)
                 return false;
@@ -56,7 +60,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 return false;
             var configFile:File = File.applicationStorageDirectory.resolvePath("config.json");
             _appModel.firstRun = !configFile.exists || configFile.modificationDate.time < defaultConfigFile.modificationDate.time;
-            if (_appModel.firstRun || overwrite)
+            if (_appModel.firstRun || setupLocalStorageParams.overwrite)
             {
                 var fileCopyCommandData:FileCopyCommandData;
                 fileCopyCommandData = new FileCopyCommandData();
@@ -82,6 +86,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileCopyCommandData.overwrite = true;
                 _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
             }
+            if (setupLocalStorageParams.handleErrors)
+                _appModel.commandExecutor.pushMethod(handleSetupError, false);
             return true;
         }
 
@@ -95,7 +101,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             {
                 NativeApplication.nativeApplication.exit();
             });
-            return false;
+            return true;
         }
     }
 }

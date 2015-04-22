@@ -10,6 +10,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileSave.FileSaveCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.fileSave.FileSaveCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
+    import com.rokannon.project.FFParticleSystemDesigner.model.params.LoadConfigParams;
 
     import feathers.controls.Alert;
     import feathers.data.ListCollection;
@@ -37,26 +38,27 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appController = appController;
         }
 
-        public function loadConfig(params:Object):Boolean
+        //
+        // Load Config
+        //
+
+        public function loadConfig(handleErrors:Boolean):void
         {
-            _appModel.commandExecutor.pushMethod(doLoadConfig, true, params);
-            return true;
+            var loadConfigParams:LoadConfigParams = new LoadConfigParams();
+            loadConfigParams.handleErrors = handleErrors;
+            _appModel.commandExecutor.pushMethod(doLoadConfig, true, loadConfigParams);
+            if (!handleErrors)
+                _appModel.commandExecutor.pushMethod(_appController.resetError, false);
         }
 
-        public function saveConfig():Boolean
-        {
-            _appModel.commandExecutor.pushMethod(doSaveConfig);
-            return true;
-        }
-
-        private function doLoadConfig(params:Object):Boolean
+        private function doLoadConfig(loadConfigParams:LoadConfigParams):Boolean
         {
             var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
             fileLoadCommandData.fileModel = _appModel.fileModel;
             fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
             _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
             _appModel.commandExecutor.pushMethod(parseConfig);
-            if (getProperty(params, "handleErrors", true))
+            if (loadConfigParams.handleErrors)
                 _appModel.commandExecutor.pushMethod(handleParseError, false);
             return true;
         }
@@ -87,13 +89,22 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 if (event.data.label == "Reset")
                     _appController.particleSystemController.resetParticleSystem();
             });
-            return false;
+            return true;
+        }
+
+        //
+        // Save Config
+        //
+
+        public function saveConfig():void
+        {
+            _appModel.commandExecutor.pushMethod(doSaveConfig);
         }
 
         private function doSaveConfig():Boolean
         {
             if (_appModel.particleModel.particleDirectory == null)
-                return false; // Nothing to save.
+                return true;
             var config:Object = {};
             config.particleDirectory = _appModel.particleModel.particleDirectory.nativePath;
             if (_appModel.particleModel.appendFromObject != null)
