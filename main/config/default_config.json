@@ -4,5 +4,6 @@
         "sourceX": 300,
         "sourceY": 500
     },
-    "particleDirectory": "demo_particle"
+    "particleDirectory": "demo_particle",
+    "particleUpdateDelay": 2.0
 }

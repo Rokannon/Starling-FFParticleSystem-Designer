@@ -71,6 +71,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 _appModel.particleModel.particleDirectory = File.applicationStorageDirectory.resolvePath(requireProperty(json,
                     "particleDirectory"));
                 _appModel.particleModel.appendFromObject = getProperty(json, "appendFromObject", null);
+                _appModel.particleUpdateModel.setUpdateDelay(getProperty(json, "particleUpdateDelay", 1.0));
             }
             catch (error:Error)
             {

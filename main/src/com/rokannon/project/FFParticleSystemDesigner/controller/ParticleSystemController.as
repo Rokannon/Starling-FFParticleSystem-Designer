@@ -244,6 +244,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appView.particleSystemLayer.addChild(particleSystem);
             particleSystem.start();
             _appModel.starlingInstance.juggler.add(particleSystem);
+            _appModel.particleModel.particleLoadTime = new Date().getTime();
             return true;
         }
 

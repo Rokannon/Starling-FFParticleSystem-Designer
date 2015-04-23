@@ -11,5 +11,7 @@ package com.rokannon.project.FFParticleSystemDesigner.model
         public var particleAtlasXml:XML;
         public var particleTexture:Texture;
         public var appendFromObject:Object;
+        public var particleLoadTime:Number = 0;
+        public var particleModificationTime:Number = 0;
     }
 }

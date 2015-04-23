@@ -38,14 +38,14 @@ package com.rokannon.project.FFParticleSystemDesigner
 
         public function lockButtons():void
         {
-            _reloadButton.isEnabled = false;
-            _resetButton.isEnabled = false;
+            _reloadButton.touchable = false;
+            _resetButton.touchable = false;
         }
 
         public function unlockButtons():void
         {
-            _reloadButton.isEnabled = true;
-            _resetButton.isEnabled = true;
+            _reloadButton.touchable = true;
+            _resetButton.touchable = true;
         }
 
         private function onAddedToStage(event:Event = null):void
