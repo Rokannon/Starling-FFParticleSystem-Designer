@@ -183,12 +183,32 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         private function doLoadTexture(loadParticleSystemParams:LoadParticleSystemParams):Boolean
         {
             loadParticleSystemParams.bitmaps = new <Bitmap>[];
-            for each (var file:File in _appModel.fileModel.directoryListing)
+
+            var file:File;
+            var fileLoadCommandData:FileLoadCommandData;
+
+            // Attempt to load ATF texture.
+
+            for each (file in _appModel.fileModel.directoryListing)
+            {
+                if (getExtension(file.nativePath) != "atf")
+                    continue;
+
+                fileLoadCommandData = new FileLoadCommandData();
+                fileLoadCommandData.fileModel = _appModel.fileModel;
+                fileLoadCommandData.fileToLoad = file;
+                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+                _appModel.commandExecutor.pushMethod(createATFTexture);
+                return true;
+            }
+
+            // ATF not found. Searching for PNG file(s).
+            for each (file in _appModel.fileModel.directoryListing)
             {
                 if (getExtension(file.nativePath) != "png")
                     continue;
 
-                var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
+                fileLoadCommandData = new FileLoadCommandData();
                 fileLoadCommandData.fileModel = _appModel.fileModel;
                 fileLoadCommandData.fileToLoad = file;
                 _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
@@ -200,6 +220,12 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 _appModel.commandExecutor.pushMethod(addBitmap, true, loadParticleSystemParams);
             }
             _appModel.commandExecutor.pushMethod(createAtlas, true, loadParticleSystemParams);
+            return true;
+        }
+
+        private function createATFTexture():Boolean
+        {
+            _appModel.particleModel.particleTexture = Texture.fromAtfData(_appModel.fileModel.fileContent);
             return true;
         }
 
