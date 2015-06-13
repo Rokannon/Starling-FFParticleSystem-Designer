@@ -280,9 +280,16 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             directoryBrowseCommandData.directoryToBrowse = particleDirectory;
             var directoryBrowseCommand:DirectoryBrowseCommand = new DirectoryBrowseCommand(directoryBrowseCommandData);
             _appModel.commandExecutor.pushCommand(directoryBrowseCommand);
+            _appModel.commandExecutor.pushMethod(handleDirectoryBrowseError, false);
             browseParticleSystemData.directoryBrowseCommand = directoryBrowseCommand;
             browseParticleSystemData.particleDirectory = particleDirectory;
             _appModel.commandExecutor.pushMethod(doBrowseParticleSystem_step2, true, browseParticleSystemData);
+            return true;
+        }
+
+        private function handleDirectoryBrowseError():Boolean
+        {
+            _appModel.commandExecutor.removeAllCommands();
             return true;
         }
 

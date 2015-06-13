@@ -85,7 +85,14 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
             directoryListingCommandData.fileModel = _appModel.fileModel;
             _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
+            _appModel.commandExecutor.pushMethod(handleDirectoryListingError, false);
             _appModel.commandExecutor.pushMethod(doUpdateModificationTime_step2);
+            return true;
+        }
+
+        private function handleDirectoryListingError():Boolean
+        {
+            _appModel.commandExecutor.removeAllCommands();
             return true;
         }
 
