@@ -112,7 +112,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             fileLoadCommandData.fileModel = _appModel.fileModel;
             for each (var file:File in _appModel.fileModel.directoryListing)
             {
-                if (getExtension(file.nativePath) == "pex")
+                if (getNativeExtension(file.nativePath) == "pex")
                     fileLoadCommandData.fileToLoad = file;
             }
             if (fileLoadCommandData.fileToLoad == null)
@@ -149,7 +149,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             fileLoadCommandData.fileModel = _appModel.fileModel;
             for each (var file:File in _appModel.fileModel.directoryListing)
             {
-                if (getExtension(file.nativePath) == "xml")
+                if (getNativeExtension(file.nativePath) == "xml")
                     fileLoadCommandData.fileToLoad = file;
             }
             if (fileLoadCommandData.fileToLoad == null)
@@ -191,7 +191,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
             for each (file in _appModel.fileModel.directoryListing)
             {
-                if (getExtension(file.nativePath) != "atf")
+                if (getNativeExtension(file.nativePath) != "atf")
                     continue;
 
                 fileLoadCommandData = new FileLoadCommandData();
@@ -205,7 +205,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             // ATF not found. Searching for PNG file(s).
             for each (file in _appModel.fileModel.directoryListing)
             {
-                if (getExtension(file.nativePath) != "png")
+                if (getNativeExtension(file.nativePath) != "png")
                     continue;
 
                 fileLoadCommandData = new FileLoadCommandData();
@@ -361,6 +361,11 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         {
             _appModel.particleModel.particleDirectory.openWithDefaultApplication();
             return true;
+        }
+
+        private static function getNativeExtension(path:String):String
+        {
+            return getExtension(path, File.separator);
         }
     }
 }
