@@ -33,6 +33,8 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
     public class ParticleSystemController
     {
+        private static const helperFiles:Vector.<File> = new <File>[];
+
         private var _appModel:ApplicationModel;
         private var _appView:ApplicationView;
         private var _appController:ApplicationController;
@@ -182,14 +184,29 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadTexture(loadParticleSystemParams:LoadParticleSystemParams):Boolean
         {
+            // Attempting to find texture possibly defined in .pex config.
+            var textureName:String = _appModel.particleModel.particlePex.texture.attribute("name");
+            for each (file in _appModel.fileModel.directoryListing)
+            {
+                if (file.name == textureName)
+                {
+                    helperFiles.length = 0;
+                    helperFiles.push(file);
+                    break;
+                }
+                else
+                    helperFiles.push(file);
+            }
+            // Now helperFiles has either a single file provided in .pex config
+            // or simply all files from directory listing.
+
             loadParticleSystemParams.bitmaps = new <Bitmap>[];
 
             var file:File;
             var fileLoadCommandData:FileLoadCommandData;
 
             // Attempt to load ATF texture.
-
-            for each (file in _appModel.fileModel.directoryListing)
+            for each (file in helperFiles)
             {
                 if (getNativeExtension(file.nativePath) != "atf")
                     continue;
@@ -199,11 +216,12 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 fileLoadCommandData.fileToLoad = file;
                 _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
                 _appModel.commandExecutor.pushMethod(createATFTexture);
+                helperFiles.length = 0;
                 return true;
             }
 
             // ATF not found. Searching for PNG file(s).
-            for each (file in _appModel.fileModel.directoryListing)
+            for each (file in helperFiles)
             {
                 if (getNativeExtension(file.nativePath) != "png")
                     continue;
@@ -220,6 +238,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 _appModel.commandExecutor.pushMethod(addBitmap, true, loadParticleSystemParams);
             }
             _appModel.commandExecutor.pushMethod(createAtlas, true, loadParticleSystemParams);
+            helperFiles.length = 0;
             return true;
         }
 
