@@ -1,7 +1,6 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
     import com.rokannon.core.utils.getProperty;
-    import com.rokannon.core.utils.requireProperty;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorMessage;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorTitle;
@@ -68,7 +67,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             try
             {
                 var json:Object = JSON.parse(_appModel.fileModel.fileContent.toString());
-                _appModel.particleModel.particleDirectory = File.applicationStorageDirectory.resolvePath(requireProperty(json,
+                _appModel.particleModel.particleDirectory = File.applicationStorageDirectory.resolvePath(getProperty(json,
                     "particleDirectory"));
                 _appModel.particleModel.appendFromObject = getProperty(json, "appendFromObject", null);
                 _appModel.particleUpdateModel.setUpdateDelay(getProperty(json, "particleUpdateDelay", 1.0));
