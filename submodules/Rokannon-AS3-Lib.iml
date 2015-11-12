@@ -4,7 +4,7 @@
     <configurations>
       <configuration name="Rokannon-AS3-Lib" target-platform="Desktop" pure-as="true" output-type="Library" output-file="Rokannon-AS3-Lib.swc" output-folder="$MODULE_DIR$/../out/production/Rokannon-AS3-Lib">
         <dependencies target-player="17.0">
-          <sdk name="AIRSDK 17" />
+          <sdk name="AIRSDK18" />
         </dependencies>
         <compiler-options>
           <map>
@@ -25,7 +25,7 @@
     <content url="file://$MODULE_DIR$/Rokannon-AS3-Lib">
       <sourceFolder url="file://$MODULE_DIR$/Rokannon-AS3-Lib/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="AIRSDK 17" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="AIRSDK18" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
