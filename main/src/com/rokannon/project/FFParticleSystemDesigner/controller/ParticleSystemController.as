@@ -1,17 +1,17 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
+    import com.rokannon.command.bitmapLoad.BitmapLoadCommand;
+    import com.rokannon.command.bitmapLoad.BitmapLoadContext;
+    import com.rokannon.command.directoryListing.DirectoryListingCommand;
+    import com.rokannon.command.directoryListing.DirectoryListingContext;
+    import com.rokannon.command.fileLoad.FileLoadCommand;
+    import com.rokannon.command.fileLoad.FileLoadContext;
     import com.rokannon.core.utils.string.getExtension;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.createBitmap.CreateBitmapCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryBrowse.DirectoryBrowseCommand;
     import com.rokannon.project.FFParticleSystemDesigner.controller.directoryBrowse.DirectoryBrowseCommandData;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorMessage;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorTitle;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
     import com.rokannon.project.FFParticleSystemDesigner.model.ParticleModel;
     import com.rokannon.project.FFParticleSystemDesigner.model.params.BrowseParticleSystemParams;
@@ -67,10 +67,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
         private function doLoadParticleSystem(loadParticleSystemParams:LoadParticleSystemParams):Boolean
         {
             _appModel.commandExecutor.pushMethod(doUnloadParticleSystem);
-            var directoryListingCommandData:DirectoryListingCommandData = new DirectoryListingCommandData();
-            directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
-            directoryListingCommandData.fileModel = _appModel.fileModel;
-            _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
+            var directoryListingContext:DirectoryListingContext = new DirectoryListingContext();
+            directoryListingContext.directoryToLoad = _appModel.particleModel.particleDirectory;
+            _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingContext));
+            _appController.moveDirectoryListingToModel(directoryListingContext);
             if (loadParticleSystemParams.handleErrors)
                 _appModel.commandExecutor.pushMethod(handleParticleDirectoryError, false);
             _appModel.commandExecutor.pushMethod(doLoadPexFile);
@@ -110,16 +110,17 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadPexFile():Boolean
         {
-            var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
-            fileLoadCommandData.fileModel = _appModel.fileModel;
+            var fileLoadContext:FileLoadContext = new FileLoadContext();
             for each (var file:File in _appModel.fileModel.directoryListing)
             {
                 if (getNativeExtension(file.nativePath) == "pex")
-                    fileLoadCommandData.fileToLoad = file;
+                    fileLoadContext.fileToLoad = file;
             }
-            if (fileLoadCommandData.fileToLoad == null)
+            if (fileLoadContext.fileToLoad == null)
                 return false;
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadContext));
+            _appController.moveLoadedFileToModel(fileLoadContext);
             _appModel.commandExecutor.pushMethod(parsePexFile);
             return true;
         }
@@ -147,16 +148,17 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadAtlasXmlFile():Boolean
         {
-            var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
-            fileLoadCommandData.fileModel = _appModel.fileModel;
+            var fileLoadContext:FileLoadContext = new FileLoadContext();
             for each (var file:File in _appModel.fileModel.directoryListing)
             {
                 if (getNativeExtension(file.nativePath) == "xml")
-                    fileLoadCommandData.fileToLoad = file;
+                    fileLoadContext.fileToLoad = file;
             }
-            if (fileLoadCommandData.fileToLoad == null)
+            if (fileLoadContext.fileToLoad == null)
                 return true; // No XML is OK.
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadContext));
+            _appController.moveLoadedFileToModel(fileLoadContext);
             _appModel.commandExecutor.pushMethod(parseAtlasXml);
             return true;
         }
@@ -203,7 +205,7 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             loadParticleSystemParams.bitmaps = new <Bitmap>[];
 
             var file:File;
-            var fileLoadCommandData:FileLoadCommandData;
+            var fileLoadContext:FileLoadContext;
 
             // Attempt to load ATF texture.
             for each (file in helperFiles)
@@ -211,10 +213,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 if (getNativeExtension(file.nativePath) != "atf")
                     continue;
 
-                fileLoadCommandData = new FileLoadCommandData();
-                fileLoadCommandData.fileModel = _appModel.fileModel;
-                fileLoadCommandData.fileToLoad = file;
-                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+                fileLoadContext = new FileLoadContext();
+                fileLoadContext.fileToLoad = file;
+                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadContext));
+                _appController.moveLoadedFileToModel(fileLoadContext);
                 _appModel.commandExecutor.pushMethod(createATFTexture);
                 helperFiles.length = 0;
                 return true;
@@ -226,14 +228,14 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 if (getNativeExtension(file.nativePath) != "png")
                     continue;
 
-                fileLoadCommandData = new FileLoadCommandData();
-                fileLoadCommandData.fileModel = _appModel.fileModel;
-                fileLoadCommandData.fileToLoad = file;
-                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
-
-                var createBitmapCommandData:CreateBitmapCommandData = new CreateBitmapCommandData();
-                createBitmapCommandData.fileModel = _appModel.fileModel;
-                _appModel.commandExecutor.pushCommand(new CreateBitmapCommand(createBitmapCommandData));
+                fileLoadContext = new FileLoadContext();
+                fileLoadContext.fileToLoad = file;
+                _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadContext));
+                _appController.moveLoadedFileToModel(fileLoadContext);
+                var bitmapLoadContext:BitmapLoadContext = new BitmapLoadContext();
+                _appController.moveModelToBitmapLoadContext(bitmapLoadContext);
+                _appModel.commandExecutor.pushCommand(new BitmapLoadCommand(bitmapLoadContext));
+                _appController.moveLoadedBitmapToModel(bitmapLoadContext);
 
                 _appModel.commandExecutor.pushMethod(addBitmap, true, loadParticleSystemParams);
             }

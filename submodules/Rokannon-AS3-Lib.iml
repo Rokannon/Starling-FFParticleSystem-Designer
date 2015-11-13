@@ -9,7 +9,6 @@
         <compiler-options>
           <map>
             <entry key="compiler.debug.swc" value="true" />
-            <entry key="compiler.define" value="CONFIG::debug&#9;false&#10;CONFIG::log_warn&#9;false&#10;CONFIG::log_fatal&#9;true&#10;CONFIG::release&#9;true" />
           </map>
           <option name="additionalOptions" value="-inline" />
         </compiler-options>

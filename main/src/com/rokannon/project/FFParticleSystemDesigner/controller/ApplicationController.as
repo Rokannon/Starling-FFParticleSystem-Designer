@@ -1,9 +1,11 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
+    import com.rokannon.command.bitmapLoad.BitmapLoadContext;
+    import com.rokannon.command.directoryListing.DirectoryListingCommand;
+    import com.rokannon.command.directoryListing.DirectoryListingContext;
+    import com.rokannon.command.fileLoad.FileLoadContext;
     import com.rokannon.math.utils.getMax;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryListing.DirectoryListingCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
 
     import de.flintfabrik.starling.display.FFParticleSystem;
@@ -81,10 +83,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doUpdateModificationTime_step1():Boolean
         {
-            var directoryListingCommandData:DirectoryListingCommandData = new DirectoryListingCommandData();
-            directoryListingCommandData.directoryToLoad = _appModel.particleModel.particleDirectory;
-            directoryListingCommandData.fileModel = _appModel.fileModel;
-            _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingCommandData));
+            var directoryListingContext:DirectoryListingContext = new DirectoryListingContext();
+            directoryListingContext.directoryToLoad = _appModel.particleModel.particleDirectory;
+            _appModel.commandExecutor.pushCommand(new DirectoryListingCommand(directoryListingContext));
+            moveDirectoryListingToModel(directoryListingContext);
             _appModel.commandExecutor.pushMethod(handleDirectoryListingError, false);
             _appModel.commandExecutor.pushMethod(doUpdateModificationTime_step2);
             return true;
@@ -102,6 +104,52 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             for each (var file:File in _appModel.fileModel.directoryListing)
                 time = getMax(time, file.modificationDate.getTime());
             _appModel.particleModel.particleModificationTime = time;
+            return true;
+        }
+
+        public function moveLoadedFileToModel(context:FileLoadContext):void
+        {
+            _appModel.commandExecutor.pushMethod(doMoveLoadedFileToModel, true, context);
+        }
+
+        private function doMoveLoadedFileToModel(context:FileLoadContext):Boolean
+        {
+            _appModel.fileModel.fileContent = context.fileContent;
+            return true;
+        }
+
+        public function moveDirectoryListingToModel(context:DirectoryListingContext):void
+        {
+            _appModel.commandExecutor.pushMethod(doMoveDirectoryListingToModel, true, context);
+        }
+
+        private function doMoveDirectoryListingToModel(context:DirectoryListingContext):Boolean
+        {
+            _appModel.fileModel.directoryListing.length = 0;
+            for (var i:int = 0; i < context.directoryListing.length; ++i)
+                _appModel.fileModel.directoryListing[i] = context.directoryListing[i];
+            return true;
+        }
+
+        public function moveModelToBitmapLoadContext(context:BitmapLoadContext):void
+        {
+            _appModel.commandExecutor.pushMethod(doMoveModelToBitmapLoadContext, true, context);
+        }
+
+        private function doMoveModelToBitmapLoadContext(context:BitmapLoadContext):Boolean
+        {
+            context.bytesToLoad = _appModel.fileModel.fileContent;
+            return true;
+        }
+
+        public function moveLoadedBitmapToModel(context:BitmapLoadContext):void
+        {
+            _appModel.commandExecutor.pushMethod(doMoveLoadedBitmapToModel, true, context);
+        }
+
+        private function doMoveLoadedBitmapToModel(context:BitmapLoadContext):Boolean
+        {
+            _appModel.fileModel.fileBitmap = context.bitmap;
             return true;
         }
     }

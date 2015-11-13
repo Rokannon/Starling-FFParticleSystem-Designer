@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="FlexIdeProjectLevelCompilerOptionsHolder">
-    <compiler-options />
+    <compiler-options>
+      <map>
+        <entry key="compiler.define" value="CONFIG::log_fatal&#9;true&#10;CONFIG::log_error&#9;true&#10;CONFIG::log_warn&#9;true&#10;CONFIG::log_info&#9;true&#10;CONFIG::debug&#9;true&#10;CONFIG::release&#9;false&#10;CONFIG::debug&#9;true" />
+      </map>
+    </compiler-options>
   </component>
 </project>

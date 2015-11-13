@@ -1,13 +1,13 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
+    import com.rokannon.command.fileLoad.FileLoadCommand;
+    import com.rokannon.command.fileLoad.FileLoadContext;
+    import com.rokannon.command.fileSave.FileSaveCommand;
+    import com.rokannon.command.fileSave.FileSaveContext;
     import com.rokannon.core.utils.getProperty;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorMessage;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorTitle;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileLoad.FileLoadCommandData;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileSave.FileSaveCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileSave.FileSaveCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
     import com.rokannon.project.FFParticleSystemDesigner.model.params.LoadConfigParams;
 
@@ -52,10 +52,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
 
         private function doLoadConfig(loadConfigParams:LoadConfigParams):Boolean
         {
-            var fileLoadCommandData:FileLoadCommandData = new FileLoadCommandData();
-            fileLoadCommandData.fileModel = _appModel.fileModel;
-            fileLoadCommandData.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadCommandData));
+            var fileLoadContext:FileLoadContext = new FileLoadContext();
+            fileLoadContext.fileToLoad = File.applicationStorageDirectory.resolvePath("config.json");
+            _appModel.commandExecutor.pushCommand(new FileLoadCommand(fileLoadContext));
+            _appController.moveLoadedFileToModel(fileLoadContext);
             _appModel.commandExecutor.pushMethod(parseConfig);
             if (loadConfigParams.handleErrors)
                 _appModel.commandExecutor.pushMethod(handleParseError, false);
@@ -111,10 +111,10 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
                 config.appendFromObject = _appModel.particleModel.appendFromObject;
             var bytes:ByteArray = new ByteArray();
             bytes.writeUTFBytes(JSON.stringify(config));
-            var fileSaveCommandData:FileSaveCommandData = new FileSaveCommandData();
-            fileSaveCommandData.bytesToWrite = bytes;
-            fileSaveCommandData.fileToSaveTo = File.applicationStorageDirectory.resolvePath("config.json");
-            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveCommandData));
+            var fileSaveContext:FileSaveContext = new FileSaveContext();
+            fileSaveContext.bytesToWrite = bytes;
+            fileSaveContext.fileToSaveTo = File.applicationStorageDirectory.resolvePath("config.json");
+            _appModel.commandExecutor.pushCommand(new FileSaveCommand(fileSaveContext));
             return true;
         }
     }

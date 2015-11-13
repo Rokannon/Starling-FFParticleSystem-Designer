@@ -1,12 +1,12 @@
 package com.rokannon.project.FFParticleSystemDesigner.controller
 {
+    import com.rokannon.command.directoryDelete.DirectoryDeleteCommand;
+    import com.rokannon.command.directoryDelete.DirectoryDeleteContext;
+    import com.rokannon.command.fileCopy.FileCopyCommand;
+    import com.rokannon.command.fileCopy.FileCopyContext;
     import com.rokannon.project.FFParticleSystemDesigner.ApplicationView;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.directoryDelete.DirectoryDeleteCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorMessage;
     import com.rokannon.project.FFParticleSystemDesigner.controller.enum.ErrorTitle;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommand;
-    import com.rokannon.project.FFParticleSystemDesigner.controller.fileCopy.FileCopyCommandData;
     import com.rokannon.project.FFParticleSystemDesigner.model.ApplicationModel;
     import com.rokannon.project.FFParticleSystemDesigner.model.params.SetupLocalStorageParams;
 
@@ -62,29 +62,27 @@ package com.rokannon.project.FFParticleSystemDesigner.controller
             _appModel.firstRun = !configFile.exists || configFile.modificationDate.time < defaultConfigFile.modificationDate.time;
             if (_appModel.firstRun || setupLocalStorageParams.overwrite)
             {
-                var fileCopyCommandData:FileCopyCommandData;
-                fileCopyCommandData = new FileCopyCommandData();
-                fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
-                fileCopyCommandData.fileToCopy = defaultConfigFile;
-                fileCopyCommandData.newFileName = "config.json";
-                fileCopyCommandData.overwrite = true;
-                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
+                var fileCopyContext:FileCopyContext;
+                fileCopyContext = new FileCopyContext();
+                fileCopyContext.directoryToCopyTo = File.applicationStorageDirectory;
+                fileCopyContext.fileToCopy = defaultConfigFile;
+                fileCopyContext.newFileName = "config.json";
+                fileCopyContext.overwrite = true;
+                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyContext));
 
                 var directoryToDelete:File = File.applicationStorageDirectory.resolvePath("demo_particle");
-                if (directoryToDelete.exists)
-                {
-                    var directoryDeleteCommandData:DirectoryDeleteCommandData = new DirectoryDeleteCommandData();
-                    directoryDeleteCommandData.deleteDirectoryContents = true;
-                    directoryDeleteCommandData.directoryToDelete = directoryToDelete;
-                    _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteCommandData));
-                }
 
-                fileCopyCommandData = new FileCopyCommandData();
-                fileCopyCommandData.directoryToCopyTo = File.applicationStorageDirectory;
-                fileCopyCommandData.fileToCopy = demoParticleDirectory;
-                fileCopyCommandData.newFileName = null;
-                fileCopyCommandData.overwrite = true;
-                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyCommandData));
+                var directoryDeleteContext:DirectoryDeleteContext = new DirectoryDeleteContext();
+                directoryDeleteContext.directoryToDelete = directoryToDelete;
+                directoryDeleteContext.failOnError = false;
+                _appModel.commandExecutor.pushCommand(new DirectoryDeleteCommand(directoryDeleteContext));
+
+                fileCopyContext = new FileCopyContext();
+                fileCopyContext.directoryToCopyTo = File.applicationStorageDirectory;
+                fileCopyContext.fileToCopy = demoParticleDirectory;
+                fileCopyContext.newFileName = null;
+                fileCopyContext.overwrite = true;
+                _appModel.commandExecutor.pushCommand(new FileCopyCommand(fileCopyContext));
             }
             if (setupLocalStorageParams.handleErrors)
                 _appModel.commandExecutor.pushMethod(handleSetupError, false);
